@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Cricket Game</title>
+  <link rel="stylesheet" href="cricket.css">
+</head>
+<body>
+
+  <h1 style="font-family: Arial; background-color: rgb(68, 250, 250);">Bat
+    Ball Stump Game</h1>
+
+  <button class="choice-button" onclick="playRound('Bat')">
+    <img src="image/bat.jpg" alt="bat-image" class="choice-image">
+  </button>
+
+  <button class="choice-button" onclick="playRound('Ball')">
+    <img src="image/ball-image.jpg" alt="ball-image" class="choice-image">
+  </button>
+
+  <button class="choice-button" onclick="playRound('Stump')">
+    <img src="image/stump.jpg" alt="stump-image" class="choice-image"></button>
+
+  
+
+  <h3>User Choice: <span id="userChoice"></span></h3>
+  <hr>
+
+  <h3>Computer Choice: <span id="computerChoice"></span></h3>
+  <hr>
+
+  <h3>Result: <span id="result"></span></h3>
+  <hr>
+
+  <h1>Score: Win: <span id="winScore"></span>, Loss: <span id="lossScore"></span>, Tie: <span id="tieScore"></span></h1>
+
+  <button onclick="resetGame()">🔄</button>
+  
+  
+
+  <script>
+    let score = JSON.parse(localStorage.getItem('score')) || {
+      Win: 0,
+      Loss: 0,
+      Tie: 0,
+    };
+
+    function generateComputerChoice() {
+      let random = Math.random() * 3;
+      if (random > 0 && random < 1) {
+        return 'Bat';
+      } else if (random > 1 && random < 2) {
+        return 'Ball';
+      } else {
+        return 'Stump';
+      }
+    }
+
+    function ifResult(userChoice, computerChoice) {
+      if (userChoice === 'Bat' && computerChoice === 'Ball') {
+        score.Win++;
+        return 'User Won';
+      } else if (userChoice === 'Bat' && computerChoice === 'Bat') {
+        score.Tie++;
+        return 'Match Tie';
+      } else if (userChoice === 'Bat' && computerChoice === 'Stump') {
+        score.Loss++;
+        return 'Computer Won';
+      } else if (userChoice === 'Ball' && computerChoice === 'Ball') {
+        score.Tie++;
+        return 'Match Tie';
+      } else if (userChoice === 'Ball' && computerChoice === 'Bat') {
+        score.Win++;
+        return 'User Won';
+      } else if (userChoice === 'Ball' && computerChoice === 'Stump') {
+        score.Loss++;
+        return 'Computer Won';
+      } else if (userChoice === 'Stump' && computerChoice === 'Ball') {
+        score.Win++;
+        return 'User Won';
+      } else if (userChoice === 'Stump' && computerChoice === 'Bat') {
+        score.Loss++;
+        return 'Computer Won';
+      } else if (userChoice === 'Stump' && computerChoice === 'Stump') {
+        score.Tie++;
+        return 'Match Tie';
+      }
+    }
+
+    function playRound(choice) {
+      let userChoice = choice;
+      let computerChoice = generateComputerChoice();
+      let result = ifResult(userChoice, computerChoice);
+
+      // Update UI
+      document.getElementById('userChoice').innerText = userChoice;
+      document.getElementById('computerChoice').innerText = computerChoice;
+      document.getElementById('result').innerText = result;
+      document.getElementById('winScore').innerText = score.Win;
+      document.getElementById('lossScore').innerText = score.Loss;
+      document.getElementById('tieScore').innerText = score.Tie;
+
+      // Update local storage after each play
+      localStorage.setItem('score', JSON.stringify(score));
+    }
+
+    function resetGame() {
+      // Reset all values to zero
+      document.getElementById('userChoice').innerText = '';
+      document.getElementById('computerChoice').innerText = '';
+      document.getElementById('result').innerText = '';
+      document.getElementById('winScore').innerText = 0;
+      document.getElementById('lossScore').innerText = 0;
+      document.getElementById('tieScore').innerText = 0;
+
+      // Reset the score in the local storage and in the JavaScript variable
+      localStorage.setItem('score', JSON.stringify({ Win: 0, Loss: 0, Tie: 0 }));
+      score = { Win: 0, Loss: 0, Tie: 0 };
+    }
+
+    // Initialize UI with values from local storage
+    document.getElementById('winScore').innerText = score.Win;
+    document.getElementById('lossScore').innerText = score.Loss;
+    document.getElementById('tieScore').innerText = score.Tie;
+  </script>
+</body>
+
+</html>
